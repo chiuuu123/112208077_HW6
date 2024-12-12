@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>1A2B</title>
+	<style>
+		.result {
+			border: 1px solid #ccc;
+			padding: 15px;
+			margin: 10px auto;
+			text-align: left;
+			margin-top: 25px;
+		}
+	</style>
+</head>
+<body>
+	<h1 style="font-family: 'Times New Roman', sans-serif;">112208077_HW6_1A2B</h1>
+	<input type="text" id="text" size="25" placeholder="請輸入4個不重複的數字">
+	<button onClick = "myFunction()">猜！</button>
+
+	<div class="result">
+        <h2>遊戲紀錄：</h2>
+        <p id="history"></p>
+    </div>
+
+	<script>
+		function generateRandomNumber() {
+            let digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            let randomNumber = [];
+            
+            for (let i = 0; i < 4; i++) {
+                const randomIndex = Math.floor(Math.random() * digits.length);
+                randomNumber.push(digits[randomIndex]);
+                digits.splice(randomIndex, 1); 
+            }
+            
+            return randomNumber;
+        }
+
+        const secretNumber = generateRandomNumber();
+		var times = 0;
+
+		function myFunction() {
+			let text = document.getElementById('text').value;
+			times++;
+
+			if (text.length !== 4 || /[^0-9]/.test(text)) {
+                alert('請輸入4個數字！');
+                return;
+            }
+
+            const textArray = text.split('').map(Number);
+
+            if (new Set(textArray).size !== 4) {
+                alert('數字不能重複！');
+                return;
+            }
+
+            let correctPosition = 0;
+            let incorrectPosition = 0;
+
+             let secretCopy = [...secretNumber];
+
+            for (let i = 0; i < 4; i++) {
+                if (textArray[i] === secretNumber[i]) {
+                    correctPosition++;
+                    secretCopy[i] = null;
+                }
+            }
+
+            for (let i = 0; i < 4; i++) {
+                if (textArray[i] !== secretNumber[i] && secretCopy.includes(textArray[i])) {
+                    incorrectPosition++;
+                    secretCopy[secretCopy.indexOf(textArray[i])] = null;
+                }
+            }
+
+            const result = `${correctPosition}A${incorrectPosition}B`;
+            document.getElementById('history').innerHTML += `<p>第${times}次: ${text} ⭢ ${result}</p>`;
+
+           
+            if (correctPosition === 4) {
+                alert(`恭喜你答對了！總共嘗試了 ${times} 次`);
+                location.reload();
+            }
+
+            document.getElementById('text').value = '';
+
+		}
+	</script>
+</body>
+</html>
